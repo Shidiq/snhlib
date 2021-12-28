@@ -1,4 +1,4 @@
-import fnmatch
+from fnmatch import fnmatch
 import os
 
 class FinderScan:
