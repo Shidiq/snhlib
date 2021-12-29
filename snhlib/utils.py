@@ -54,3 +54,12 @@ def confidence_ellipse(x, y, ax, n_std=3.0, facecolor='none', **kwargs):
 
     ellipse.set_transform(transf + ax.transData)
     return ax.add_patch(ellipse)
+
+
+def COLORs(style=1):
+    if style == 1:
+        co = ['r', 'b', 'g', 'c', 'm', 'y', 'k', 'C0', 'C1', 'C2']
+    return co
+
+def MARKERs():
+    return ["o", "v", "s", "p", "P", "*", "h", "H", "X", "D"]
