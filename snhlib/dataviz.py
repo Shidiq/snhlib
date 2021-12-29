@@ -122,7 +122,7 @@ class CalcPCA:
 
         plt.xlabel(xlabs)
         plt.ylabel(ylabs)
-        plt.legend(targets)
+        plt.legend()
         return fig
 
     def screenplot(self, **options):
