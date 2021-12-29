@@ -36,7 +36,7 @@ class CalcPCA:
         self.scaler = options.get('scaler', StandardScaler())
         self.colors = options.get(
             'colors', ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'C0', 'C1', 'C2'])
-        self.markes = options.get(
+        self.markers = options.get(
             'markers', ["o", "v", "s", "p", "P", "*", "h", "H", "X", "D"])
         self.pca = PCA()
 
