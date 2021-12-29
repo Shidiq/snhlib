@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from snhlib.image import Style
+from snhlib.utils import confidence_ellipse
 import numpy as np
 
 
@@ -91,10 +92,12 @@ class CalcPCA:
 
     def plotpc(self, **options):
         PC = options.get('PC', ['PC1', 'PC2'])
-        a = options.get('adj_left', 0.1)
-        b = options.get('adj_bottom', 0.15)
+        # a = options.get('adj_left', 0.1)
+        # b = options.get('adj_bottom', 0.15)
         s = options.get('size', 90)
+        elip = options.get('ellipse', True)
         ascending = options.get('ascending', True)
+
         self.pcadf = self.pcadf.sort_values(by=['label'], ascending=ascending)
 
         targets = list(self.pcadf['label'].unique())
@@ -111,8 +114,11 @@ class CalcPCA:
         fig, ax = Style().paper()
         for target, color, mark in zip(targets, colors, markers):
             indicesToKeep = self.pcadf['label'] == target
-            ax.scatter(self.pcadf.loc[indicesToKeep, PC[0]],
-                       self.pcadf.loc[indicesToKeep, PC[1]], c=color, marker=mark, s=s)
+            x = self.pcadf.loc[indicesToKeep, PC[0]]
+            y = self.pcadf.loc[indicesToKeep, PC[1]]
+            ax.scatter(x, y, c=color, marker=mark, s=s)
+            if elip:
+                confidence_ellipse(x, y, ax, edgecolor=color)
 
         plt.xlabel(xlabs)
         plt.ylabel(ylabs)
