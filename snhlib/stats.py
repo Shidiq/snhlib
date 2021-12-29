@@ -127,7 +127,9 @@ class Significant:
             effect_size_interpretation = "Very Large"
         return effect_size_interpretation
 
-    def cohend(self, d1, d2):
+    def cohend(self, kontrol, test):
+        d1 = kontrol
+        d2 = test
         # calculate the size of samples
         n1, n2 = len(d1), len(d2)
         # calculate the variance of the samples
