@@ -40,4 +40,5 @@ class Style:
         matplotlib.rcParams.update(params)
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
+        fig.patch.set_facecolor('xkcd:white')
         return fig, ax
