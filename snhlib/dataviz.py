@@ -116,7 +116,7 @@ class CalcPCA:
             indicesToKeep = self.pcadf['label'] == target
             x = self.pcadf.loc[indicesToKeep, PC[0]]
             y = self.pcadf.loc[indicesToKeep, PC[1]]
-            ax.scatter(x, y, c=color, marker=mark, s=s)
+            ax.scatter(x, y, c=color, marker=mark, s=s, label=str(target))
             if elip:
                 confidence_ellipse(x, y, ax, edgecolor=color)
 
@@ -126,8 +126,8 @@ class CalcPCA:
         return fig
 
     def screenplot(self, **options):
-        a = options.get('adj_left', 0.1)
-        b = options.get('adj_bottom', 0.2)
+        # a = options.get('adj_left', 0.1)
+        # b = options.get('adj_bottom', 0.2)
         lim = options.get('PC', None)
 
         if lim is None:
