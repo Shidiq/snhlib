@@ -1,6 +1,8 @@
-from sklearn import metrics
-from sklearn.model_selection import cross_val_score
 from collections import Counter
+from sklearn import metrics
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
+from sklearn.model_selection import cross_val_score
+import numpy as np
 
 
 class Evaluate:
@@ -66,3 +68,72 @@ class Evaluate:
         print(metrics.accuracy_score(self.y, self.pred))
         if self.X_test is not None:
             print(metrics.accuracy_score(self.y_test, self.pred_test))
+
+
+class Report:
+    @staticmethod
+    def cm(ytrue, ypred, labels=['positive', 'negative']):
+        pos_sensi = labels[0]
+        pos_spesi = labels[1]
+
+        akurasi = accuracy_score(ytrue, ypred)
+
+        try:
+            cc = confusion_matrix(ytrue, ypred, labels=[pos_sensi, pos_spesi])
+        except UnboundLocalError:
+            cc = confusion_matrix(ytrue, ypred)
+
+        TT = np.diag(cc)
+        FF = cc.sum(axis=0) - TT
+
+        n = np.unique(labels)
+
+        if len(n) == 1:
+            if n[0] == pos_sensi:
+                FP = FF[1]
+                FN = FF[0]
+                TP = TT[1]
+                TN = TT[0]
+        else:
+            FP = FF[0]
+            FN = FF[1]
+            TP = TT[0]
+            TN = TT[1]
+
+        try:
+            f1 = f1_score(ytrue, ypred, pos_label=pos_sensi)
+        except UnboundLocalError:
+            f1 = 'nan'
+
+        try:
+            if (TP + FN) == 0:
+                raise ValueError
+
+            sensi = TP / (TP + FN)
+        except ValueError:
+            sensi = 'nan'
+
+        try:
+            if (TN + FP) == 0:
+                raise ValueError
+
+            spesi = TN / (TN + FP)
+        except ValueError:
+            spesi = 'nan'
+
+        PPV = TP/(TP+FP)
+        NPV = TN/(TN+FN)
+
+        res = {
+            'TP': TP,
+            'TN': TN,
+            'FP': FP,
+            'FN': FN,
+            'accuracy': round(akurasi, 3),
+            'f1-score': 'nan' if f1 == 'nan' else round(f1, 3),
+            'sensitivity': 'nan' if sensi == 'nan' else round(sensi, 3),
+            'specificity': 'nan' if spesi == 'nan' else round(spesi, 3),
+            'PPV': round(PPV, 3),
+            'NPV': round(NPV, 3),
+        }
+        return res
