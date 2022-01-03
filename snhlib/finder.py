@@ -1,5 +1,8 @@
 from fnmatch import fnmatch
 import os
+import pandas as pd
+import json
+
 
 class FinderScan:
     @staticmethod
@@ -13,3 +16,13 @@ class FinderScan:
                     if verbose == 1:
                         print(r)
         return res, (path, subdirs, files)
+
+    @staticmethod
+    def openDataGeNose(item, cols):
+        if item.find('.csv') != -1:
+            data = pd.read_csv(item)
+        else:
+            data = json.load(open(item, 'r'))
+            data = data['datasensor']
+            data = pd.DataFrame(data, columns=cols)
+        return data
