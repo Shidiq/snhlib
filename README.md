@@ -6,7 +6,7 @@ Tags: [[contents#Misc]]
 
 Install: `pip install git+https://github.com/Shidiq/snhlib.git`
 
-Lathes version: ==0.0.1-alpha.14==
+> Latest version: **0.0.1-alpha.14**
 
 
 ## Features
@@ -52,4 +52,3 @@ Lathes version: ==0.0.1-alpha.14==
   - finder - FinderScan - scanroot
 - 0.0.1-alpha.10 (2021122900):
   - stats - Significant - [KolmogorovSmirnov, PSI, cohend]
-
