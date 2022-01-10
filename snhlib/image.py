@@ -22,7 +22,7 @@ class Style:
             "axes.labelweight": "bold",
             'axes.titlesize': 28,
             'axes.titleweight': "bold",
-            "figure.dpi": 150,
+            "figure.dpi": 300,
             "figure.figsize": figsize,
             "legend.loc": loc,
             "legend.fontsize": 24,
