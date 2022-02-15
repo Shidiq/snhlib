@@ -6,7 +6,7 @@ Tags: [[contents#Misc]]
 
 Install: `pip install git+https://github.com/Shidiq/snhlib.git`
 
-> Latest version: **0.0.1-alpha.14**
+> Latest version: **0.0.1-alpha.14**-
 
 
 ## Features
