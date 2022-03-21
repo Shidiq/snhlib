@@ -10,7 +10,7 @@ from scipy.spatial.distance import squareform
 from scipy.stats import spearmanr
 from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import StandardScaler
-from utils import ProgressBar
+from snhlib.utils import ProgressBar
 
 
 class HybridHAC:
