@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.cluster import hierarchy
-from scipy.cluster.distance import squareform
 from scipy.cluster.hierarchy import fcluster
+from scipy.spatial.distance import squareform
 from scipy.stats import spearmanr
 from sklearn.inspection import permutation_importance
 from sklearn.preprocessing import StandardScaler
