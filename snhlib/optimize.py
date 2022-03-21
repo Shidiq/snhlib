@@ -89,7 +89,7 @@ class HybridHAC:
 
         dict_clust = {"d": [], "c": []}
         df_clust = pd.DataFrame()
-        fclus = [0 for i in range(10)]
+        fclus = [0 for i in range(len(self.colnames))]
 
         for i, d in enumerate(list_d):
             fclus_new = fcluster(self.dist_linkage_, t=d, criterion="distance")
