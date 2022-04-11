@@ -130,5 +130,4 @@ dmypy.json
 
 .vscode/
 .DS_Store
-testing.py
-tes_pca_iris.pdf
+testing/
