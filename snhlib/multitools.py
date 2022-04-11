@@ -23,9 +23,6 @@ def evaluate_clf(
     if cv is None:
         cv = RepeatedKFold(n_repeats=10, n_splits=5, random_state=0)
 
-    if scaler is None:
-        scaler = False
-
     scores = {
         "accuracy": [],
         "sensitivity": [],
