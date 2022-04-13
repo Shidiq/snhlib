@@ -161,7 +161,7 @@ class AUC_confidence_interval:
 
     @property
     def zcrit_(self):
-        return norm.ppf(0.5 * (1 - self.alpha))
+        return norm.ppf(1 - self.alpha/2)
 
     @property
     def se_(self):
