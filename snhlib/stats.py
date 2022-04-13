@@ -1,5 +1,7 @@
-from scipy.stats import ks_2samp
+from dataclasses import dataclass
+
 import numpy as np
+from scipy.stats import ks_2samp, norm
 
 
 class Significant:
@@ -18,9 +20,9 @@ class Significant:
         val = self.calculate_psi(kontrol, test)
 
         if val < 0.1:
-            res = 'no significant population change'
+            res = "no significant population change"
         elif val < 0.2:
-            res = 'moderate population change'
+            res = "moderate population change"
         elif val >= 0.2:
             res = "significant population change"
 
@@ -29,8 +31,8 @@ class Significant:
         return val, res
 
     @staticmethod
-    def calculate_psi(expected, actual, buckettype='bins', buckets=10, axis=0):
-        '''Calculate the PSI (population stability index) across all variables
+    def calculate_psi(expected, actual, buckettype="bins", buckets=10, axis=0):
+        """Calculate the PSI (population stability index) across all variables
 
         Args:
         expected: numpy matrix of original values
@@ -46,10 +48,10 @@ class Significant:
         Matthew Burke
         github.com/mwburke
         worksofchart.com
-        '''
+        """
 
         def psi(expected_array, actual_array, buckets):
-            '''Calculate the PSI for a single variable
+            """Calculate the PSI for a single variable
 
             Args:
             expected_array: numpy array of original values
@@ -58,7 +60,7 @@ class Significant:
 
             Returns:
             psi_value: calculated PSI value
-            '''
+            """
 
             def scale_range(input, min, max):
                 input += -(np.min(input))
@@ -68,34 +70,40 @@ class Significant:
 
             breakpoints = np.arange(0, buckets + 1) / (buckets) * 100
 
-            if buckettype == 'bins':
-                breakpoints = scale_range(breakpoints, np.min(
-                    expected_array), np.max(expected_array))
-            elif buckettype == 'quantiles':
+            if buckettype == "bins":
+                breakpoints = scale_range(
+                    breakpoints, np.min(expected_array), np.max(expected_array)
+                )
+            elif buckettype == "quantiles":
                 breakpoints = np.stack(
-                    [np.percentile(expected_array, b) for b in breakpoints])
+                    [np.percentile(expected_array, b) for b in breakpoints]
+                )
 
-            expected_percents = np.histogram(expected_array, breakpoints)[
-                0] / len(expected_array)
-            actual_percents = np.histogram(actual_array, breakpoints)[
-                0] / len(actual_array)
+            expected_percents = np.histogram(expected_array, breakpoints)[0] / len(
+                expected_array
+            )
+            actual_percents = np.histogram(actual_array, breakpoints)[0] / len(
+                actual_array
+            )
 
             def sub_psi(e_perc, a_perc):
-                '''Calculate the actual PSI value from comparing the values.
+                """Calculate the actual PSI value from comparing the values.
                 Update the actual value to a very small number if equal to zero
-                '''
+                """
                 if a_perc == 0:
                     a_perc = 0.0001
                 if e_perc == 0:
                     e_perc = 0.0001
 
                 value = (e_perc - a_perc) * np.log(e_perc / a_perc)
-                return(value)
+                return value
 
-            psi_value = np.sum(sub_psi(expected_percents[i], actual_percents[i]) for i in range(
-                0, len(expected_percents)))
+            psi_value = np.sum(
+                sub_psi(expected_percents[i], actual_percents[i])
+                for i in range(0, len(expected_percents))
+            )
 
-            return(psi_value)
+            return psi_value
 
         if len(expected.shape) == 1:
             psi_values = np.empty(len(expected.shape))
@@ -110,7 +118,7 @@ class Significant:
             elif axis == 1:
                 psi_values[i] = psi(expected[i, :], actual[i, :], buckets)
 
-        return(psi_values)
+        return psi_values
 
     @staticmethod
     def interpret_cohens_d(val):
@@ -142,3 +150,30 @@ class Significant:
         res = (u1 - u2) / s
         size = self.interpret_cohens_d(res)
         return res, size
+
+
+@dataclass
+class AUC_confidence_interval:
+    n1: int
+    n2: int
+    auc: float
+    alpha: float = 0.05
+
+    @property
+    def zcrit_(self):
+        return norm.ppf(0.5 * (1 - self.alpha))
+
+    @property
+    def se_(self):
+        q0 = self.auc * (1 - self.auc)
+        q1 = self.auc / (2 - self.auc) - self.auc**2
+        q2 = 2 * self.auc**2 / (1 + self.auc) - self.auc**2
+        return np.sqrt(
+            (q0 + (self.n1 - 1) * q1 + (self.n2 - 1) * q2) / (self.n1 * self.n2)
+        )
+
+    @property
+    def interval_(self):
+        lower = self.auc - self.zcrit_ * self.se_
+        upper = self.auc + self.zcrit_ * self.se_
+        return lower, upper
