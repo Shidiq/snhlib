@@ -174,7 +174,7 @@ class CalcPCA:
 
     def loadingplot(self, **options):
         lim = options.get("alim", 1.1)
-        circle = options.get("circle", 100)
+        circle = options.get("circle", 2)
 
         PC = ["PC1", "PC2"]
         xlabs = f'{PC[0]} ({float(self.vardf.values[self.vardf["PC"] == PC[0], 0])}%)'
@@ -197,7 +197,7 @@ class CalcPCA:
                 size=18,
             )
 
-        an = np.linspace(0, 2 * np.pi, circle)
+        an = np.linspace(0, circle * np.pi, 100)
         plt.plot(np.cos(an), np.sin(an))  # Add a unit circle for scale
         plt.axis("equal")
         ax.set_xlim([-lim, lim])
