@@ -172,7 +172,10 @@ class CalcPCA:
         plt.ylabel("Percentage of Variance (%)")
         return fig
 
-    def loadingplot(self):
+    def loadingplot(self, **options):
+        lim = options.get("alim", 1.1)
+        circle = options.get("circle", 100)
+
         PC = ["PC1", "PC2"]
         xlabs = f'{PC[0]} ({float(self.vardf.values[self.vardf["PC"] == PC[0], 0])}%)'
         ylabs = f'{PC[1]} ({float(self.vardf.values[self.vardf["PC"] == PC[1], 0])}%)'
@@ -194,11 +197,11 @@ class CalcPCA:
                 size=18,
             )
 
-        an = np.linspace(0, 2 * np.pi, 100)
+        an = np.linspace(0, 2 * np.pi, circle)
         plt.plot(np.cos(an), np.sin(an))  # Add a unit circle for scale
         plt.axis("equal")
-        ax.set_xlim([-1.1, 1.1])
-        ax.set_ylim([-1.1, 1.1])
+        ax.set_xlim([-lim, lim])
+        ax.set_ylim([-lim, lim])
         ax.set_xlabel(xlabs)
         ax.set_ylabel(ylabs)
         plt.axhline(y=0.0, color="b", linestyle="--")
