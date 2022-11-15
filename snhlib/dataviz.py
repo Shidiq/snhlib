@@ -90,12 +90,9 @@ class CalcPCA:
         pcname = [f"PC{i + 1}" for i in range(pcscore.shape[1])]
         # pcname = [f'PC{i + 1}' for i in range(self.x.shape[1])]
         if self.featurename is None:
-            self.featurename = [
-                f"Feature{i + 1}" for i in range(self.x.shape[1])]
+            self.featurename = [f"Feature{i + 1}" for i in range(self.x.shape[1])]
         # var_exp = [round(i * 100, self.round_) for i in sorted(self.pca.explained_variance_ratio_, reverse=True)]
-        var_exp = np.round(
-            self.pca.explained_variance_ratio_ * 100, decimals=self.round_
-        )
+        var_exp = np.round(self.pca.explained_variance_ratio_ * 100, decimals=self.round_)
         self.vardf = pd.DataFrame({"Var (%)": var_exp, "PC": pcname})
         # pcscore = self.pca.transform(self.x)
         pcaDF = pd.DataFrame(data=pcscore, columns=pcname)
@@ -112,14 +109,11 @@ class CalcPCA:
         return self.pcadf, self.vardf, self.eigpc
 
     def getcomponents(self):
-        loading_score = pd.DataFrame(
-            data=self.pca.components_, columns=[self.featurename]
-        )
+        loading_score = pd.DataFrame(data=self.pca.components_, columns=[self.featurename])
         return loading_score
 
     def getbestfeature(self, PC=0, n=3):
-        loading_score = pd.Series(
-            self.pca.components_[PC], index=self.featurename)
+        loading_score = pd.Series(self.pca.components_[PC], index=self.featurename)
         sorted_loading_score = loading_score.abs().sort_values(ascending=False)
         top_score = sorted_loading_score[0:n].index.values
         print(loading_score[top_score])
@@ -172,10 +166,43 @@ class CalcPCA:
             data_ = self.vardf.loc[:lim, :]
 
         fig, _ = Style().paper()
-        plt.bar(x="PC", height="Var (%)", data=data_)
+        sns.pointplot(x="PC", y="Var (%)", data=data_)
         plt.xticks(rotation="vertical")
         plt.xlabel("Principal Component")
-        plt.ylabel("Percentage of Variance")
+        plt.ylabel("Percentage of Variance (%)")
+        return fig
+
+    def loadingplot(self):
+        PC = ["PC1", "PC2"]
+        xlabs = f'{PC[0]} ({float(self.vardf.values[self.vardf["PC"] == PC[0], 0])}%)'
+        ylabs = f'{PC[1]} ({float(self.vardf.values[self.vardf["PC"] == PC[1], 0])}%)'
+
+        fig, ax = Style().paper()
+        for i in range(0, self.pca.components_.shape[1]):
+            ax.arrow(
+                0,
+                0,
+                self.pca.components_[0, i],
+                self.pca.components_[1, i],
+                head_width=0.05,
+                head_length=0.05,
+            )
+            plt.text(
+                self.pca.components_[0, i] + 0.05,
+                self.pca.components_[1, i] + 0.05,
+                self.featurename[i],
+                size=18,
+            )
+
+        an = np.linspace(0, 2 * np.pi, 100)
+        plt.plot(np.cos(an), np.sin(an))  # Add a unit circle for scale
+        plt.axis("equal")
+        ax.set_xlim([-1.1, 1.1])
+        ax.set_ylim([-1.1, 1.1])
+        ax.set_xlabel(xlabs)
+        ax.set_ylabel(ylabs)
+        plt.axhline(y=0.0, color="b", linestyle="--")
+        plt.axvline(x=0.0, color="b", linestyle="--")
         return fig
 
 
@@ -258,8 +285,7 @@ class CalcLDA:
             ldaDF1 = pd.concat(
                 [
                     self.ldadf,
-                    pd.DataFrame(
-                        data=self.ldadf["label"].values, columns=["Class"]),
+                    pd.DataFrame(data=self.ldadf["label"].values, columns=["Class"]),
                 ],
                 axis=1,
             )
@@ -268,8 +294,7 @@ class CalcLDA:
             ldaDF2 = pd.concat(
                 [
                     self.ldaval,
-                    pd.DataFrame(
-                        data=self.ldaval["label"].values, columns=["Class"]),
+                    pd.DataFrame(data=self.ldaval["label"].values, columns=["Class"]),
                 ],
                 axis=1,
             )
@@ -299,11 +324,8 @@ class CalcLDA:
             s = options.get("size", 10)
 
             if self.dual:
-                self.ldaval = self.ldaval.sort_values(
-                    by=["label"], ascending=ascending)
-                ax = sns.stripplot(
-                    x="label", y="LD1", color="k", size=s, data=self.ldadf
-                )
+                self.ldaval = self.ldaval.sort_values(by=["label"], ascending=ascending)
+                ax = sns.stripplot(x="label", y="LD1", color="k", size=s, data=self.ldadf)
                 ax = sns.stripplot(
                     x="label",
                     y="LD1",
@@ -342,8 +364,7 @@ class CalcLDA:
                     confidence_ellipse(x, y, ax, edgecolor=color)
 
             if self.dual:
-                self.ldaval = self.ldaval.sort_values(
-                    by=["label"], ascending=ascending)
+                self.ldaval = self.ldaval.sort_values(by=["label"], ascending=ascending)
 
                 for target, color, mark in zip(targets, colors, markers):
                     indicesToKeep = self.ldaval["label"] == target
