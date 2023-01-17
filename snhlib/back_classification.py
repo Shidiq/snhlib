@@ -1,6 +1,9 @@
 from collections import Counter
 
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from imblearn.metrics import geometric_mean_score
 from sklearn import metrics
 from sklearn.discriminant_analysis import (
@@ -14,6 +17,7 @@ from sklearn.metrics import (
     accuracy_score,
     auc,
     brier_score_loss,
+    classification_report,
     confusion_matrix,
     f1_score,
     make_scorer,
@@ -292,16 +296,102 @@ class Evaluate:
 
 
 class Report:
+    def __init__(self, labels=["negative", "positive"]):
+        self.labels = labels
+
     @staticmethod
-    def cm(ytrue, ypred, labels=["positive", "negative"]):
+    def classification_reports(
+        X_train, X_test, y_train, y_test, model, report=True, plot=False, return_df=False
+    ):
+        if report:
+            print("Train report")
+            print(classification_report(y_train, model.predict(X_train)))
+            print()
+            print("Test report")
+            print(classification_report(y_test, model.predict(X_test)))
+
+        if return_df:
+            labels = y_train.unique()
+            df_train = pd.DataFrame(
+                classification_report(
+                    y_train, model.predict(X_train), labels=labels, output_dict=True
+                )
+            )
+
+            labels = y_test.unique()
+            df_test = pd.DataFrame(
+                classification_report(
+                    y_test, model.predict(X_test), labels=labels, output_dict=True
+                )
+            )
+
+            return df_train.T, df_test.T
+
+        if plot:
+            fig = plt.figure(figsize=(11, 5))
+            plt.subplots_adjust(wspace=0.4)
+
+            plt.subplot(121)
+            labels = y_train.unique()
+            df_train = pd.DataFrame(
+                classification_report(
+                    y_train, model.predict(X_train), labels=labels, output_dict=True
+                )
+            )
+            df_plot = df_train.iloc[:-1, : len(labels)]
+            sns.heatmap(
+                df_plot,
+                vmin=0,
+                vmax=1,
+                annot=True,
+                square=True,
+                cmap="Blues",
+                cbar=False,
+                xticklabels=labels,
+                yticklabels=df_plot.index,
+                fmt=".2f",
+                annot_kws={"fontsize": 15},
+            )
+            plt.yticks(rotation=0, fontsize=14)
+            plt.xticks(rotation=45, horizontalalignment="right", fontsize=12)
+            plt.title("Train", fontsize=14)
+
+            plt.subplot(122)
+            labels = y_test.unique()
+            df_test = pd.DataFrame(
+                classification_report(
+                    y_test, model.predict(X_test), labels=labels, output_dict=True
+                )
+            )
+            df_plot = df_test.iloc[:-1, : len(labels)]
+            sns.heatmap(
+                df_plot,
+                vmin=0,
+                vmax=1,
+                annot=True,
+                square=True,
+                cmap="Greens",
+                cbar=False,
+                xticklabels=labels,
+                yticklabels=df_plot.index,
+                fmt=".2f",
+                annot_kws={"fontsize": 15},
+            )
+            plt.yticks(rotation=0, fontsize=14)
+            plt.xticks(rotation=45, horizontalalignment="right", fontsize=12)
+            plt.title("Test", fontsize=14)
+
+            return fig
+
+    def cm(self, ytrue, ypred):
         TP = 0
         TN = 0
         FN = 0
         FP = 0
         akurasi = 0.0
 
-        pos_sensi = labels[0]
-        pos_spesi = labels[1]
+        pos_spesi = self.labels[0]
+        pos_sensi = self.labels[1]
 
         akurasi = accuracy_score(ytrue, ypred)
 
@@ -313,7 +403,7 @@ class Report:
         TT = np.diag(cc)
         FF = cc.sum(axis=0) - TT
 
-        n = np.unique(labels)
+        n = np.unique(self.labels)
 
         if len(n) == 1:
             if n[0] == pos_sensi:
@@ -356,7 +446,7 @@ class Report:
             "TN": TN,
             "FP": FP,
             "FN": FN,
-            "accuracy": round(akurasi, 3),
+            "accuracy": round(float(akurasi), 3),
             "f1-score": "nan" if f1 == "nan" else round(f1, 3),
             "sensitivity": "nan" if sensi == "nan" else round(sensi, 3),
             "specificity": "nan" if spesi == "nan" else round(spesi, 3),

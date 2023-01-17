@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import List
 
@@ -8,6 +9,13 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, recall_score
 from sklearn.model_selection import RepeatedKFold
+
+
+def value_counts(y):
+    counter = Counter(y)
+    for k, v in counter.items():
+        per = v / len(y) * 100
+        print("Class=%s, Count=%d, Percentage=%.3f%%" % (str(k), v, per))
 
 
 def evaluate_clf(
@@ -54,10 +62,7 @@ def evaluate_clf(
 
     # print
     print("Internal validation:")
-    print(
-        "Accuracy   : %.2f ± %.2f"
-        % (np.mean(scores["accuracy"]), np.std(scores["accuracy"]))
-    )
+    print("Accuracy   : %.2f ± %.2f" % (np.mean(scores["accuracy"]), np.std(scores["accuracy"])))
     print(
         "Sensitivity: %.2f ± %.2f"
         % (np.mean(scores["sensitivity"]), np.std(scores["sensitivity"]))
