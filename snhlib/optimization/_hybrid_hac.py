@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,106 +6,14 @@ from scipy.cluster import hierarchy
 from scipy.cluster.hierarchy import fcluster
 from scipy.spatial.distance import squareform
 from scipy.stats import spearmanr
-from sklearn.decomposition import PCA
 from sklearn.inspection import permutation_importance
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from tensorflow.keras.layers import BatchNormalization, Dense, Input, LeakyReLU
-from tensorflow.keras.models import Model
+from sklearn.preprocessing import StandardScaler
 
-from snhlib.utils import ProgressBar
-
-
-class AutoEncoder:
-    def __init__(
-        self,
-        n_target: int,
-        test_size=0.2,
-        epochs=200,
-        batch_size=16,
-        random_state=None,
-        verbose=2,
-    ) -> None:
-        self.n_bottleneck = n_target
-        self.test_size = test_size
-        self.epochs = epochs
-        self.batch_size = batch_size
-        self.random_state = random_state
-        self.verbose = verbose
-        self.history_ = None
-        self.encoder_ = None
-        return
-
-    def train_test_split(self, X, y):
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=self.test_size, random_state=self.random_state
-        )
-        return X_train, X_test, y_train, y_test
-
-    def fit(self, X, y) -> None:
-        X_train, X_test, y_train, y_test = self.train_test_split(X, y)
-
-        t = MinMaxScaler()
-        t.fit(X_train)
-        X_train = t.transform(X_train)
-        X_test = t.transform(X_test)
-
-        # define encoder
-        n_inputs = X.shape[1]
-        visible = Input(shape=(n_inputs,))
-
-        # encoder level 1
-        e = Dense(n_inputs * 2)(visible)
-        e = BatchNormalization()(e)
-        e = LeakyReLU()(e)
-
-        # encoder level 2
-        e = Dense(n_inputs)(e)
-        e = BatchNormalization()(e)
-        e = LeakyReLU()(e)
-
-        # bottleneck
-        n_bottleneck = self.n_bottleneck
-        bottleneck = Dense(n_bottleneck)(e)
-
-        # define decoder level 1
-        d = Dense(n_inputs)(bottleneck)
-        d = BatchNormalization()(d)
-        d = LeakyReLU()(d)
-
-        # output layer
-        output = Dense(n_inputs, activation="linear")(d)
-
-        # define autoencoder model
-        model = Model(inputs=visible, outputs=output)
-
-        # compile autoencoder model
-        model.compile(optimizer="adam", loss="mse")
-
-        self.history_ = model.fit(
-            X_train,
-            X_train,
-            epochs=self.epochs,
-            batch_size=self.batch_size,
-            verbose=self.verbose,
-            validation_data=(X_test, X_test),
-        )
-
-        self.encoder_ = Model(inputs=visible, outputs=bottleneck)
-        return
-
-    @property
-    def plot_history_(self):
-        plt.plot(self.history_.history["loss"], label="train")
-        plt.plot(self.history_.history["val_loss"], label="test")
-        plt.legend()
-        plt.show()
+from snhlib.collections._progress_bar import ProgressBar
 
 
 class HybridHAC:
-    def __init__(
-        self, colnames, n_repeats=100, step=0.01, random_state=None, linewidth=3
-    ) -> None:
+    def __init__(self, colnames, n_repeats=100, step=0.01, random_state=None, linewidth=3) -> None:
         self.colnames = colnames
         self.n_repeats = n_repeats
         self.step = step
@@ -125,9 +31,7 @@ class HybridHAC:
         dist_linkage_ = self.get_dist_lingkage(X)
         fig, ax = self.paper()
         matplotlib.rcParams["lines.linewidth"] = self.linewidth
-        _ = hierarchy.dendrogram(
-            dist_linkage_, labels=self.colnames, ax=ax, leaf_rotation=90
-        )
+        _ = hierarchy.dendrogram(dist_linkage_, labels=self.colnames, ax=ax, leaf_rotation=90)
         plt.xticks(fontsize=28)
         ax.set_xlabel("Features")
         ax.set_ylabel("Distance")
@@ -170,9 +74,7 @@ class HybridHAC:
         return dist_linkage
 
     def get_data_cluster(self):
-        dendro = hierarchy.dendrogram(
-            self.dist_linkage_, labels=self.colnames, no_plot=True
-        )
+        dendro = hierarchy.dendrogram(self.dist_linkage_, labels=self.colnames, no_plot=True)
         dd = dendro["dcoord"]
         dmax = max([max(dd[i]) for i in range(len(dd))])
         dmin = min(min(dendro["dcoord"]))
@@ -264,31 +166,3 @@ class HybridHAC:
         ax = fig.add_subplot(1, 1, 1)
         fig.patch.set_facecolor("xkcd:white")
         return fig, ax
-
-
-class CorrectionComponent:
-    def __init__(self, n_component=1) -> None:
-        self.n_component = n_component
-        self.pca = None
-        self.loading_matrix_ = None
-        self.loading_vector_ = None
-        self.pcnames = [f"PC{i+1}" for i in range(self.n_component)]
-
-    def fit(self, X, y=None) -> None:
-
-        self.pca = PCA(n_components=self.n_component)
-        self.pca.fit(X)
-        self.loading_vector_ = self.pca.components_.T * np.sqrt(
-            self.pca.explained_variance_
-        )
-        self.loading_matrix_ = pd.DataFrame(
-            data=self.loading_vector_, columns=self.pcnames
-        )
-        return
-
-    def transform(self, X, y=None) -> None:
-        score_vector = np.dot(X, self.loading_matrix_)
-        drift_component = np.dot(
-            score_vector, np.transpose(self.loading_vector_))
-        Xcorr = X - drift_component
-        return Xcorr
