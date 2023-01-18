@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="snhlib",
-    version="0.0.1-alpha.33",
+    version="0.0.1-alpha.35",
     description="The SNH's Misc. Tools",
     url="https://github.com/Shidiq/snhlib.git",
     author="Shidiq Nur Hidayat",
