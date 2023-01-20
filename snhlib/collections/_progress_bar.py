@@ -1,7 +1,20 @@
 import re
+import sys
 
 
 class ProgressBar(object):
+    """
+    A simple progress bar for terminal
+    Simple example::
+        progress = ProgressBar(20, width=25, fmt=ProgressBar.FULL)
+        for i in range(20):
+            progress()
+            progress.current = i
+            sleep(0.05)
+        progress.done()
+        # ==> [=====                    ]  4/20 ( 20%) 16 to go
+    """
+
     DEFAULT = "Progress: %(bar)s %(percent)3d%%"
     FULL = "%(bar)s %(current)d/%(total)d (%(percent)3d%%) %(remaining)d to go"
 
