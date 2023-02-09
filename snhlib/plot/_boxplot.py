@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd
 import seaborn as sns
+from sklearn.preprocessing import Normalizer
 
 from snhlib.plot._style import custom_style
 
@@ -35,6 +36,14 @@ def boxplot(data: pd.DataFrame, id_vars: tuple, value_vars: list, hue_order=None
     legend_texts = options.get("legend_texts", None)
     per1000 = options.get("per1000", False)
     figsize = options.get("figsize", (10.72, 8.205))
+    normalizer = options.get("normalizer", False)
+
+    if normalizer:
+        norm = Normalizer()
+        X_norm = norm.fit_transform(data[value_vars].values)
+        X_df = pd.DataFrame(X_norm, columns=value_vars)
+        X_df[id_vars] = data[id_vars].values
+        data = X_df
 
     data_melt = pd.melt(data, id_vars=id_vars, value_vars=value_vars)
 
@@ -63,7 +72,7 @@ def boxplot(data: pd.DataFrame, id_vars: tuple, value_vars: list, hue_order=None
     plt.xticks(rotation=rotation)
 
     if per1000:
-        ticks_y = ticker.FuncFormatter(lambda x, pos: "{0:g}".format(x / 1000.0))
+        ticks_y = ticker.FuncFormatter(lambda x, pos: "{0:.2f}".format(x / 1000.0))
         ax.yaxis.set_major_formatter(ticks_y)
 
     return fig

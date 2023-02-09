@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
 
 from snhlib.plot._confidence_ellipse import confidence_ellipse
@@ -39,6 +40,8 @@ class CalcLDA:
         self.lda_ = LinearDiscriminantAnalysis()
         self.scaler = kwargs.get("scaler", StandardScaler())
         self.colors = kwargs.get("colors", None)
+        self.showfliers = kwargs.get("showfliers", True)
+        self.contamination = kwargs.get("contamination", 0.1)
         self.markers = kwargs.get(
             "markers", ["o", "v", "s", "p", "P", "*", "h", "H", "X", "D", "+", "x", "d"]
         )
@@ -59,6 +62,12 @@ class CalcLDA:
             self.yval = arrays[3]
             self.ld_val_ = None
             self.dual = True
+
+        if not self.showfliers:
+            iso = IsolationForest(contamination=float(self.contamination))
+            yhat = iso.fit_predict(self.X)
+            mask = yhat != -1
+            self.X, self.y = self.X[mask, :], self.y[mask]
 
         scaler = self.scaler
         X = scaler.fit_transform(self.X)

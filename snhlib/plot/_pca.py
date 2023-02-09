@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.decomposition import PCA
+from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
 
 from snhlib.plot._confidence_ellipse import confidence_ellipse
@@ -22,6 +23,8 @@ class CalcPCA:
         self.pca_ = PCA()
         self.scaler = kwargs.get("scaler", StandardScaler)
         self.featurename = kwargs.get("featurename", None)
+        self.showfliers = kwargs.get("showfliers", True)
+        self.contamination = kwargs.get("contamination", 0.1)
         self.colors = kwargs.get("palette", None)
         self.markers = kwargs.get(
             "markers", ["o", "v", "s", "p", "P", "*", "h", "H", "X", "D", "+", "x", "d"]
@@ -43,6 +46,12 @@ class CalcPCA:
         """
         self.X = X
         self.y = y
+
+        if not self.showfliers:
+            iso = IsolationForest(contamination=float(self.contamination))
+            yhat = iso.fit_predict(self.X)
+            mask = yhat != -1
+            self.X, self.y = self.X[mask, :], self.y[mask]
 
         if self.scaler is not None:
             scaler = self.scaler()
