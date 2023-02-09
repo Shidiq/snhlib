@@ -20,6 +20,7 @@ def plot_data(
     linewidht=4,
     loc=1,
     per1000=True,
+    figsize=(10.72, 8.205),
 ):
     """plot_data
     Plot data multisensors. ex.: GeNose data
@@ -58,7 +59,7 @@ def plot_data(
     """
     data_melt = pd.melt(data, id_vars=id_vars, value_vars=value_vars)
 
-    fig, ax = custom_style()
+    fig, ax = custom_style(figsize=figsize)
 
     if palette is not None:
         palette = sns.color_palette("Paired", 10)
@@ -93,7 +94,7 @@ def plot_data(
         ax.set_ylabel(ylabel)
 
     if per1000:
-        ticks_y = ticker.FuncFormatter(lambda x, pos: "{0:g}".format(x / 1000.0))
+        ticks_y = ticker.FuncFormatter(lambda x, pos: "{0:.2f}".format(x / 1000.0))
         ax.yaxis.set_major_formatter(ticks_y)
 
     if legend:
