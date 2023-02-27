@@ -57,8 +57,8 @@ def boxplot(data: pd.DataFrame, id_vars: tuple, value_vars: list, hue_order=None
         showfliers=showfliers,
         palette=palette,
     )
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel, fontsize=28, fontweight="bold")
+    ax.set_ylabel(ylabel, fontsize=28, fontweight="bold")
     if legend:
         if isinstance(legend_texts, list):
             L = ax.legend(loc=loc)
@@ -75,4 +75,4 @@ def boxplot(data: pd.DataFrame, id_vars: tuple, value_vars: list, hue_order=None
         ticks_y = ticker.FuncFormatter(lambda x, pos: "{0:.2f}".format(x / 1000.0))
         ax.yaxis.set_major_formatter(ticks_y)
 
-    return fig
+    return fig, ax

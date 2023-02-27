@@ -119,12 +119,16 @@ class CalcPCA:
             if ellips:
                 confidence_ellipse(x, y, ax, edgecolor=color)
 
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
+        ax.set_xlabel(xlabel, fontsize=28, fontweight="bold")
+        ax.set_ylabel(ylabel, fontsize=28, fontweight="bold")
 
         if legend:
-            ax.legend(loc=loc)
-        return fig
+            if loc == 5:
+                ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+            else:
+                ax.legend(loc=loc)
+
+        return fig, ax
 
     def screenplot(self, **kwargs):
         """screenplot
@@ -185,8 +189,8 @@ class CalcPCA:
         plt.axis("equal")
         ax.set_xlim([-lim, lim])
         ax.set_ylim([-lim, lim])
-        ax.set_xlabel(xlabs)
-        ax.set_ylabel(ylabs)
+        ax.set_xlabel(xlabs, fontsize=28, fontweight="bold")
+        ax.set_ylabel(ylabs, fontsize=28, fontweight="bold")
         plt.axhline(y=0.0, color="b", linestyle="--")
         plt.axvline(x=0.0, color="b", linestyle="--")
         return fig

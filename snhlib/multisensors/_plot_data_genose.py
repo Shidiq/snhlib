@@ -14,6 +14,7 @@ def plot_data(
     vline=[],
     fill=True,
     xlim=None,
+    ylim=None,
     xlabel="Time (s)",
     ylabel="Value",
     legend=True,
@@ -66,7 +67,7 @@ def plot_data(
 
     sns.lineplot(
         data=data_melt,
-        x="time(s)",
+        x=id_vars,
         y="value",
         hue="variable",
         ax=ax,
@@ -87,11 +88,14 @@ def plot_data(
     if xlim is not None:
         ax.set_xlim(xlim)
 
+    if ylim is not None:
+        ax.set_ylim(ylim)
+
     if xlabel is not None:
-        ax.set_xlabel(xlabel)
+        ax.set_xlabel(xlabel, fontsize=28, fontweight="bold")
 
     if ylabel is not None:
-        ax.set_ylabel(ylabel)
+        ax.set_ylabel(ylabel, fontsize=28, fontweight="bold")
 
     if per1000:
         ticks_y = ticker.FuncFormatter(lambda x, pos: "{0:.2f}".format(x / 1000.0))

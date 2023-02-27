@@ -39,7 +39,7 @@ class CalcLDA:
         self.ld_ = pd.DataFrame()
         self.lda_ = LinearDiscriminantAnalysis()
         self.scaler = kwargs.get("scaler", StandardScaler())
-        self.colors = kwargs.get("colors", None)
+        self.colors = kwargs.get("palette", None)
         self.showfliers = kwargs.get("showfliers", True)
         self.contamination = kwargs.get("contamination", 0.1)
         self.markers = kwargs.get(
@@ -140,7 +140,7 @@ class CalcLDA:
             else:
                 ax = sns.stripplot(x="label", y="LD1", size=s, data=self.ld_)
 
-            ax.set_xlabel("Classes")
+            ax.set_xlabel("Classes", fontsize=28, fontweight="bold")
             ax = plt.axhline(y=0, linewidth=1.5, color="black", linestyle="--")
             return fig
         else:
@@ -188,9 +188,12 @@ class CalcLDA:
                     )
 
             if legend:
-                ax.legend(loc=loc)
+                if loc == 5:
+                    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+                else:
+                    ax.legend(loc=loc)
 
-            ax.set_xlabel(xlabs)
-            ax.set_ylabel(ylabs)
+            ax.set_xlabel(xlabs, fontsize=28, fontweight="bold")
+            ax.set_ylabel(ylabs, fontsize=28, fontweight="bold")
 
-            return fig
+            return fig, ax
