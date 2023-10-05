@@ -118,6 +118,7 @@ class CalcLDA:
         ascending = kwargs.get("ascending", True)
         legend = kwargs.get("legend", True)
         loc = kwargs.get("loc", "best")
+        figsize = kwargs.get("figsize", (10.72, 8.205))
 
         self.ld_ = self.ld_.sort_values(by=["label"], ascending=ascending)
         nlabel = np.unique(self.y)
@@ -160,7 +161,7 @@ class CalcLDA:
             xlabs = f"LD1 ({self.var_.values[0, 0]}%)"
             ylabs = f"LD2 ({self.var_.values[1, 0]}%)"
 
-            fig, ax = custom_style()
+            fig, ax = custom_style(figsize=figsize)
             for target, color, mark in zip(targets, colors, markers):
                 indicesToKeep = self.ld_["label"] == target
                 x = self.ld_.loc[indicesToKeep, "LD1"]
@@ -182,7 +183,7 @@ class CalcLDA:
                         y,
                         marker=mark,
                         s=s,
-                        facecolors="none",
+                        facecolors="white",
                         edgecolors=color,
                         label=f"{target} - test",
                     )

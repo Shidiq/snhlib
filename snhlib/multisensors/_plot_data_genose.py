@@ -107,7 +107,7 @@ def plot_data(
         else:
             leg = ax.legend(loc=loc)
 
-        for legobj in leg.legendHandles:
+        for legobj in leg.legend_handles:
             legobj.set_linewidth(linewidht)
 
     return fig

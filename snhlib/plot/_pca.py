@@ -26,6 +26,7 @@ class CalcPCA:
         self.showfliers = kwargs.get("showfliers", True)
         self.contamination = kwargs.get("contamination", 0.1)
         self.colors = kwargs.get("palette", None)
+        self.upper = kwargs.get("upper", None)
         self.markers = kwargs.get(
             "markers", ["o", "v", "s", "p", "P", "*", "h", "H", "X", "D", "+", "x", "d"]
         )
@@ -93,6 +94,7 @@ class CalcPCA:
         ascending = kwargs.get("ascending", True)
         legend = kwargs.get("legend", True)
         loc = kwargs.get("loc", "best")
+        figsize = kwargs.get("figsize", (10.72, 8.205))
 
         if ascending:
             self.pc_ = self.pc_.sort_values(by=["label"], ascending=ascending)
@@ -101,6 +103,13 @@ class CalcPCA:
 
         if self.colors is None:
             colors = sns.color_palette("Paired", len(targets))
+        elif isinstance(self.colors, dict):
+            targets = list(self.colors.keys())
+
+            if self.upper is not None:
+                targets = [str(i).upper() for i in targets]
+
+            colors = list(self.colors.values())
         else:
             colors = self.colors[: len(targets)]
 
@@ -109,7 +118,7 @@ class CalcPCA:
         xlabel = f'{PC[0]} ({float(self.var_.values[self.var_["PC"] == PC[0], 0])}%)'
         ylabel = f'{PC[1]} ({float(self.var_.values[self.var_["PC"] == PC[1], 0])}%)'
 
-        fig, ax = custom_style()
+        fig, ax = custom_style(figsize=figsize)
         for target, color, mark in zip(targets, colors, markers):
             indicesToKeep = self.pc_["label"] == target
             x = self.pc_.loc[indicesToKeep, PC[0]]
