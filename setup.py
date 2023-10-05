@@ -9,6 +9,7 @@ setup(
     author_email="s.hidayat@nanosense-id.com",
     license="GNU General Public License v3.0",
     packages=["snhlib"],
+    package_data={"": ["*.py"]},
     install_requires=[],
     zip_safe=False,
     include_package_data=True,
