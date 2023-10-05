@@ -17,4 +17,5 @@ setup(
     license="MIT",
     packages=["snhlib"],
     install_requires=[],
+    include_package_data=True,
 )
