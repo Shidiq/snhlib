@@ -39,7 +39,7 @@ class CalcLDA:
         self.ld_ = pd.DataFrame()
         self.lda_ = LinearDiscriminantAnalysis()
         self.scaler = kwargs.get("scaler", StandardScaler())
-        self.colors = kwargs.get("colors", None)
+        self.colors = kwargs.get("palette", None)
         self.showfliers = kwargs.get("showfliers", True)
         self.contamination = kwargs.get("contamination", 0.1)
         self.markers = kwargs.get(
@@ -118,6 +118,7 @@ class CalcLDA:
         ascending = kwargs.get("ascending", True)
         legend = kwargs.get("legend", True)
         loc = kwargs.get("loc", "best")
+        figsize = kwargs.get("figsize", (10.72, 8.205))
 
         self.ld_ = self.ld_.sort_values(by=["label"], ascending=ascending)
         nlabel = np.unique(self.y)
@@ -140,7 +141,7 @@ class CalcLDA:
             else:
                 ax = sns.stripplot(x="label", y="LD1", size=s, data=self.ld_)
 
-            ax.set_xlabel("Classes")
+            ax.set_xlabel("Classes", fontsize=28, fontweight="bold")
             ax = plt.axhline(y=0, linewidth=1.5, color="black", linestyle="--")
             return fig
         else:
@@ -160,7 +161,7 @@ class CalcLDA:
             xlabs = f"LD1 ({self.var_.values[0, 0]}%)"
             ylabs = f"LD2 ({self.var_.values[1, 0]}%)"
 
-            fig, ax = custom_style()
+            fig, ax = custom_style(figsize=figsize)
             for target, color, mark in zip(targets, colors, markers):
                 indicesToKeep = self.ld_["label"] == target
                 x = self.ld_.loc[indicesToKeep, "LD1"]
@@ -182,15 +183,18 @@ class CalcLDA:
                         y,
                         marker=mark,
                         s=s,
-                        facecolors="none",
+                        facecolors="white",
                         edgecolors=color,
                         label=f"{target} - test",
                     )
 
             if legend:
-                ax.legend(loc=loc)
+                if loc == 5:
+                    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+                else:
+                    ax.legend(loc=loc)
 
-            ax.set_xlabel(xlabs)
-            ax.set_ylabel(ylabs)
+            ax.set_xlabel(xlabs, fontsize=28, fontweight="bold")
+            ax.set_ylabel(ylabs, fontsize=28, fontweight="bold")
 
-            return fig
+            return fig, ax
