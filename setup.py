@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -15,7 +15,7 @@ setup(
     url="https://github.com/Shidiq/snhlib.git",
     project_urls={"Bug Tracker": "https://github.com/Shidiq/snhlib/issues"},
     license="MIT",
-    packages=["snhlib"],
+    packages=find_packages(),
     install_requires=[],
     include_package_data=True,
 )
