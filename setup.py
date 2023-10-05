@@ -15,6 +15,6 @@ setup(
     url="https://github.com/Shidiq/snhlib.git",
     project_urls={"Bug Tracker": "https://github.com/Shidiq/snhlib/issues"},
     license="MIT",
-    packages=["snhlib/snhlib"],
+    packages=["snhlib"],
     install_requires=[],
 )
