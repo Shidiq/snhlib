@@ -123,7 +123,7 @@ class CalcPCA:
             indicesToKeep = self.pc_["label"] == target
             x = self.pc_.loc[indicesToKeep, PC[0]]
             y = self.pc_.loc[indicesToKeep, PC[1]]
-            ax.scatter(x, y, c=color, marker=mark, s=s, label=str(target))
+            ax.scatter(x, y, c=[color], marker=mark, s=s, label=str(target))
 
             if ellips:
                 confidence_ellipse(x, y, ax, edgecolor=color)
