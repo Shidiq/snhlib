@@ -166,7 +166,7 @@ class CalcLDA:
                 indicesToKeep = self.ld_["label"] == target
                 x = self.ld_.loc[indicesToKeep, "LD1"]
                 y = self.ld_.loc[indicesToKeep, "LD2"]
-                ax.scatter(x, y, c=color, marker=mark, s=s, label=target)
+                ax.scatter(x, y, c=[color], marker=mark, s=s, label=target)
 
                 if elip:
                     confidence_ellipse(x, y, ax, edgecolor=color)
