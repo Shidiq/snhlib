@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="snhlib",
-    version="0.0.1-alpha.45",
+    version="0.0.1-alpha.46",
     author="Shidiq Nur Hidayat",
     author_email="s.hidayat@nanosense-id.com",
     description="The SNH's Misc. Tools",
