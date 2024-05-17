@@ -34,8 +34,8 @@ def custom_style(loc="best", classic=True, figsize=(10.72, 8.205), single_ax=Tru
 
     params = {
         "axes.formatter.useoffset": False,
-        "font.family": "sans-serif",
-        "font.sans-serif": "Arial",
+        # "font.family": "sans-serif",
+        # "font.sans-serif": "Arial",
         "xtick.labelsize": 28,
         "ytick.labelsize": 28,
         "axes.labelsize": 28,
