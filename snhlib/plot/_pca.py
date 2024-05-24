@@ -171,8 +171,8 @@ class CalcPCA:
         """
         lim = kwargs.get("alim", 1.1)
         circle = kwargs.get("circle", 2)
+        PC = kwargs.get("PC", ["PC1", "PC2"])
 
-        PC = ["PC1", "PC2"]
         xlabs = f'{PC[0]} ({float(self.var_.values[self.var_["PC"] == PC[0], 0])}%)'
         ylabs = f'{PC[1]} ({float(self.var_.values[self.var_["PC"] == PC[1], 0])}%)'
 
@@ -181,14 +181,14 @@ class CalcPCA:
             ax.arrow(
                 0,
                 0,
-                self.pca_.components_[0, i],
-                self.pca_.components_[1, i],
+                self.pca_.components_[int(PC[0][-1]) - 1, i],
+                self.pca_.components_[int(PC[1][-1]) - 1, i],
                 head_width=0.05,
                 head_length=0.05,
             )
             plt.text(
-                self.pca_.components_[0, i] + 0.05,
-                self.pca_.components_[1, i] + 0.05,
+                self.pca_.components_[int(PC[0][-1]) - 1, i] + 0.05,
+                self.pca_.components_[int(PC[1][-1]) - 1, i] + 0.05,
                 self.featurename[i],
                 size=18,
             )
