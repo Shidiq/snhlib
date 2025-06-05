@@ -24,11 +24,16 @@ def kolmogorov_smirnov(kontrol: list, test: list, pvalue=0.05, verbose=0) -> tup
     tuple
         KS-value, results
     """
-    val = float(ks_2samp(kontrol, test))
-    res = "rejected" if val < pvalue else "accepted"
+    result = ks_2samp(kontrol, test)
+    ks_stat = result.statistic
+    ks_pval = result.pvalue
+    res = "rejected" if ks_pval < pvalue else "accepted"
     if verbose != 0:
-        print(f"H0 was {res} with K-S value {val}")
-    return val, res
+        print(
+            f"H0 was {res} with KS statistic {ks_stat:.4f} "
+            f"(p-value: {ks_pval:.3e})"
+        )
+    return ks_pval, res
 
 
 def evaluate_ks_and_roc_auc(y_real, y_proba):
